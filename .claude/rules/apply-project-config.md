@@ -14,6 +14,8 @@ from `project.env` and substitutes them in-place into every file that embeds tho
 | `.claude/rules/readme-docker-compose.md` | Docker image name (`sesopenko/mcp-base`) |
 | `README.md` | Docker image name and MCP server name |
 | `dockerhub/repository-overview-copy.md` | Docker image name |
+| `src/mcp_base/*.py` | Package name in module docstrings and imports |
+| `src/mcp_base/` (directory) | Renamed to `src/${PACKAGE_NAME}/` |
 
 ### Rules
 

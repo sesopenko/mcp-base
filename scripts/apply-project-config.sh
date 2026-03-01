@@ -39,8 +39,6 @@ echo "Applying project config from ${ENV_FILE}..."
 
 # pyproject.toml — package name, project name, description, wheel path
 echo "pyproject.toml"
-substitute "transmission-mcp" "${PROJECT_NAME}" "${REPO_ROOT}/pyproject.toml"
-substitute "transmission_mcp" "${PACKAGE_NAME}" "${REPO_ROOT}/pyproject.toml"
 substitute "mcp-base" "${PROJECT_NAME}" "${REPO_ROOT}/pyproject.toml"
 substitute "mcp_base" "${PACKAGE_NAME}" "${REPO_ROOT}/pyproject.toml"
 substitute "Bare-bones FastMCP server template" "${PROJECT_DESCRIPTION}" "${REPO_ROOT}/pyproject.toml"
@@ -61,5 +59,21 @@ substitute "mcp-base" "${MCP_SERVER_NAME}" "${REPO_ROOT}/README.md"
 # dockerhub/repository-overview-copy.md — Docker image name
 echo "dockerhub/repository-overview-copy.md"
 substitute "sesopenko/mcp-base" "${DOCKER_IMAGE}" "${REPO_ROOT}/dockerhub/repository-overview-copy.md"
+
+# src/mcp_base/*.py — package name in docstrings and imports
+# (must run before the directory rename below)
+if [[ -d "${REPO_ROOT}/src/mcp_base" ]]; then
+  echo "src/mcp_base/*.py"
+  for f in "${REPO_ROOT}/src/mcp_base/"*.py; do
+    substitute "mcp_base" "${PACKAGE_NAME}" "${f}"
+    substitute "mcp-base" "${PROJECT_NAME}" "${f}"
+  done
+fi
+
+# src/mcp_base/ → src/${PACKAGE_NAME}/ — rename source directory (idempotent)
+if [[ "${PACKAGE_NAME}" != "mcp_base" && -d "${REPO_ROOT}/src/mcp_base" ]]; then
+  echo "renaming src/mcp_base/ -> src/${PACKAGE_NAME}/"
+  mv "${REPO_ROOT}/src/mcp_base" "${REPO_ROOT}/src/${PACKAGE_NAME}"
+fi
 
 echo "Done."
