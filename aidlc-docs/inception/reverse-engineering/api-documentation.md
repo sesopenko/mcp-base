@@ -4,9 +4,7 @@
 
 ---
 
-## MCP Tools — ALL TO BE REMOVED
-
-The following tools currently exist and will be deleted:
+## MCP Tools — Current (Transmission-specific, ALL TO BE REMOVED)
 
 | Tool | Status |
 |---|---|
@@ -18,7 +16,13 @@ The following tools currently exist and will be deleted:
 | `remove_torrent` | REMOVE |
 | `remove_torrent_and_delete_data` | REMOVE |
 
-All tool handler functions in `server.py` and all logic in `tools.py` are removed.
+## MCP Tools — Target (placeholder)
+
+| Tool | Status | Description |
+|---|---|---|
+| `health_check` | ADD | Returns `{"status": "ok"}`. Placeholder example; home for future tools. |
+
+`tools.py` is repurposed (not deleted) — Transmission logic replaced with `health_check()`. The `@mcp.tool()` registration moves to `server.py` following the existing pattern.
 
 ---
 

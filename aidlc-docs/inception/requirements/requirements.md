@@ -14,8 +14,8 @@
 ### FR-01: Package renamed to `mcp_base`
 The Python package directory and all internal references must be renamed from `transmission_mcp` to `mcp_base`. The installable project name in `pyproject.toml` must be `mcp-base`.
 
-### FR-02: Remove all MCP tools
-All `@mcp.tool()` registrations in `server.py` and the entire `tools.py` file must be deleted. The resulting server registers zero tools.
+### FR-02: Replace all MCP tools with a single placeholder health-check tool
+All Transmission-specific `@mcp.tool()` registrations in `server.py` and all Transmission-specific logic in `tools.py` must be deleted. `tools.py` is **not** deleted — it is repurposed as the home for tool implementations, containing a single `health_check` tool that returns a fixed response (e.g. `{"status": "ok"}`). The `@mcp.tool()` registration for `health_check` lives in `server.py`, following the existing server/tools separation pattern. This serves as a working example for template users adding their own tools.
 
 ### FR-03: Remove Transmission integration
 - Delete the `transmission-rpc` dependency from `pyproject.toml`
@@ -48,6 +48,9 @@ The `README.md` must be rewritten to serve as a developer guide for the template
 - How to run the server locally and via Docker
 - How to run the tests
 - Configuration reference (`[server]` and `[logging]` sections)
+- An **Example System Prompt** section containing:
+  - A brief explanation of why XML is preferred over markdown or plain text for system prompts — XML provides explicit named tags that give agents unambiguous semantic meaning (a `<role>` tag is unambiguously a role; a `<tool>` tag with a `name` attribute is unambiguously a tool descriptor), whereas markdown headings and plain text require the agent to infer structure and intent from formatting conventions
+  - A concrete XML-formatted example system prompt referencing the `health_check` tool, following the same `<system>`, `<role>`, `<tools>`, `<tool name="...">`, and `<guidelines>` structure used in the existing README
 - The Acknowledgement section must be preserved (per project rules)
 
 ### FR-08: `repository-overview.md` rewritten for template
@@ -63,8 +66,8 @@ Remove any commands or references that are no longer valid after stripping (inte
 
 ## Non-Functional Requirements
 
-### NFR-01: No new functionality introduced
-This is purely a removal project. No new features, tools, or business logic are added.
+### NFR-01: No new functionality beyond the placeholder tool
+This is primarily a removal project. The only new code introduced is the `health_check` tool defined in FR-02. No other new features, tools, or business logic are added.
 
 ### NFR-02: Code quality tooling preserved
 `ruff`, `mypy`, `pre-commit`, and all dev dependencies remain. The template ships with the same quality gates as the source project.

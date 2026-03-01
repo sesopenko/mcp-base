@@ -50,7 +50,7 @@ A bare-bones MCP server template with:
 | Component | Status |
 |---|---|
 | `server.py` tool registrations (7 tools) | REMOVE |
-| `tools.py` (entire file) | REMOVE |
+| `tools.py` (entire file) | REPURPOSE — replace Transmission logic with `health_check()` placeholder |
 | `transmission-rpc` dependency | REMOVE |
 | `[transmission]` config section | REMOVE |
 | Transmission-specific unit tests | REMOVE |

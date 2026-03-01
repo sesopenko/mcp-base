@@ -17,7 +17,7 @@
 | `src/transmission_mcp/__init__.py` | KEEP | Empty package marker; rename package directory |
 | `src/transmission_mcp/__main__.py` | KEEP | Generic `python -m` entry; no changes |
 | `src/transmission_mcp/server.py` | REPURPOSE | Keep FastMCP init + `main()`; delete all `@mcp.tool()` registrations, `_client` global, `TransmissionClient` import, `tools` import |
-| `src/transmission_mcp/tools.py` | REMOVE | Entire file — all Transmission-specific logic |
+| `src/transmission_mcp/tools.py` | REPURPOSE | Remove all Transmission logic; replace with `health_check()` returning `{"status": "ok"}` as a placeholder example |
 | `src/transmission_mcp/config.py` | REPURPOSE | Keep `ServerConfig`, `LoggingConfig`, `load_config()`; delete `TransmissionConfig`, `[transmission]` parsing |
 | `src/transmission_mcp/logging.py` | KEEP | Fully generic; no domain code |
 

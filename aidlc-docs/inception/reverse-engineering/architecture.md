@@ -21,9 +21,8 @@
                           |  - Tool registrations|  [REMOVE — all 7 tools]
                           |  - main() entrypoint |  [KEEP]
                           |         |            |
-                          |  tools.py            |  [REMOVE — entire file]
-                          |  - Tool functions    |
-                          |  - Validation        |
+                          |  tools.py            |  [REPURPOSE — health_check() placeholder]
+                          |  - health_check()    |
                           |         |            |
                           |  config.py           |  [REPURPOSE — remove [transmission] section]
                           |  - TOML loading      |
@@ -74,9 +73,9 @@
 - **After**: FastMCP instance + no tools + `main()` — clean starting point for new tools
 - **Remove**: `_client` global, `TransmissionClient` import, all `@mcp.tool()` handlers, `tools` import
 
-### tools.py — REMOVE ENTIRELY
+### tools.py — REPURPOSE
 - **Current**: All Transmission-specific tool logic, validation, helpers
-- **After**: File deleted
+- **After**: Single `health_check()` function returning `{"status": "ok"}`; serves as example and home for future tools
 
 ### config.py — REPURPOSE
 - **Current**: `AppConfig` with `TransmissionConfig`, `ServerConfig`, `LoggingConfig`

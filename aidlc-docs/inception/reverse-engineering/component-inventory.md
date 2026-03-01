@@ -11,7 +11,8 @@
 | `transmission_mcp` package (directory + __init__.py) | REPURPOSE — rename to generic name |
 | `server.py` — FastMCP init + main() | KEEP skeleton |
 | `server.py` — 7 tool registrations | REMOVE |
-| `tools.py` — entire file | REMOVE |
+| `tools.py` — Transmission logic | REMOVE |
+| `tools.py` — `health_check()` placeholder | ADD |
 | `config.py` — ServerConfig + LoggingConfig + load_config() | KEEP |
 | `config.py` — TransmissionConfig | REMOVE |
 | `logging.py` | KEEP |
@@ -51,7 +52,7 @@
 
 | Category | Current | After Stripping |
 |---|---|---|
-| Source modules | 6 | 5 (tools.py removed) |
+| Source modules | 6 | 6 (tools.py repurposed, not removed) |
 | Unit test files | 6 | 2 (test_logging.py + reduced test_config.py) |
 | Integration test files | 7 | 0 |
 | External runtime deps | 2 | 1 (fastmcp only) |

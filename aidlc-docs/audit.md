@@ -18,6 +18,30 @@
 
 ---
 
+## Requirements Analysis — NFR-01 Amendment
+**Timestamp**: 2026-03-01T00:00:00Z
+**User Input**: "NFR-01: the health check tool mentioned earlier, make sure that's not missed. If it's clear in another requirement then that's fine."
+**AI Response**: NFR-01 contradicted FR-02 (stated "no new tools added" while FR-02 adds health_check). Updated NFR-01 to carve out the health_check tool as the sole intentional addition.
+**Context**: INCEPTION - Requirements Analysis amendment.
+
+---
+
+## Requirements Analysis — FR-07 Amendment
+**Timestamp**: 2026-03-01T00:00:00Z
+**User Input**: "FR-07: Look at the current README.md and you'll see an xml formatted system prompt to help agents. Provide an example of this in the new README.md with an explanation on how XML provides clearer semantic meaning to agents than markdown or plain text."
+**AI Response**: Updated FR-07 in requirements.md — README must include an Example System Prompt section with: (1) a brief explanation of why XML is preferred (explicit named tags give unambiguous semantic meaning vs. inferred structure in markdown/plain text), (2) a concrete XML example referencing health_check, using the same <system>/<role>/<tools>/<guidelines> structure as the existing README.
+**Context**: INCEPTION - Requirements Analysis amendment.
+
+---
+
+## Requirements Analysis — FR-02 Amendment
+**Timestamp**: 2026-03-01T00:00:00Z
+**User Input**: "FR-02: don't delete tools.py, instead have a placeholder health check tool that will simply return a fixed response. It will serve as a home for tools and give an example implementation."
+**AI Response**: Updated FR-02 in requirements.md — tools.py is repurposed (not deleted); Transmission logic replaced with a single `health_check()` function returning `{"status": "ok"}`. Updated architecture.md, code-structure.md, business-overview.md, api-documentation.md, and component-inventory.md to reflect disposition change from REMOVE to REPURPOSE.
+**Context**: INCEPTION - Requirements Analysis amendment.
+
+---
+
 ## Requirements Analysis — User Answers Received
 **Timestamp**: 2026-03-01T00:00:00Z
 **User Input**: "commit" (after filling answers in requirement-verification-questions.md: Q1=A, Q2=B, Q3=A, Q4=A, Q5=C (keep publish.yml with GitHub repo variables for image name), Q6=B (skip security rules))
