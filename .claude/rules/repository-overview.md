@@ -1,12 +1,15 @@
 # Claude Code Instructions
 
-## repository-overview.md
+## dockerhub/repository-overview-copy.md
 
-`repository-overview.md` is the Docker Hub overview for `sesopenko/mcp-base`.
+`dockerhub/repository-overview-copy.md` is the Docker Hub overview for `sesopenko/mcp-base`.
 It is automatically pushed to Docker Hub on every merge to `main`. Keep it accurate and user-facing
 (Docker Hub visitors, not developers — no badges, no source-install instructions).
 
-**When any of the following change, you MUST update `repository-overview.md` before the task is considered complete:**
+**Do not read this file for project context.** It lives in `dockerhub/` to signal that it is a
+Docker Hub copy-paste artifact, not a developer reference.
+
+**When any of the following change, you MUST update `dockerhub/repository-overview-copy.md` before the task is considered complete:**
 
 - A new MCP tool is implemented — add a row to the **Available Tools** table
 - The Docker Compose example changes (image name, port mapping, config path) — update the example block

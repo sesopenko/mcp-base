@@ -58,8 +58,8 @@ echo "README.md"
 substitute "sesopenko/mcp-base" "${DOCKER_IMAGE}" "${REPO_ROOT}/README.md"
 substitute "mcp-base" "${MCP_SERVER_NAME}" "${REPO_ROOT}/README.md"
 
-# repository-overview.md — Docker image name
-echo "repository-overview.md"
-substitute "sesopenko/mcp-base" "${DOCKER_IMAGE}" "${REPO_ROOT}/repository-overview.md"
+# dockerhub/repository-overview-copy.md — Docker image name
+echo "dockerhub/repository-overview-copy.md"
+substitute "sesopenko/mcp-base" "${DOCKER_IMAGE}" "${REPO_ROOT}/dockerhub/repository-overview-copy.md"
 
 echo "Done."

@@ -130,7 +130,7 @@ The `.claude/rules/` directory contains a set of standing instructions that are 
 **Documentation accuracy**
 - The Available Tools table in `README.md` must be updated whenever a new tool is implemented
 - The Docker Compose example in `README.md` must stay accurate if the image name, port, or config path changes
-- `repository-overview.md` (the Docker Hub overview) must be updated to match any changes to tools, configuration, or endpoints
+- `dockerhub/repository-overview-copy.md` (the Docker Hub overview) must be updated to match any changes to tools, configuration, or endpoints
 - `MAINTAINERS.md` must be updated with any new developer commands introduced during development
 
 **Template integrity**

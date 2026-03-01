@@ -7,3 +7,4 @@ requires their contents).
 ## Ignored paths
 
 - LICENSE.txt
+- dockerhub/repository-overview-copy.md — Docker Hub copy-paste artifact; not developer documentation

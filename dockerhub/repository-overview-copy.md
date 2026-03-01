@@ -1,3 +1,6 @@
+<!-- This file is copy-pasted into Docker Hub as the repository overview.
+     It is NOT developer documentation. Do not read this for project context.
+     Edit it only when tools, config, Docker Compose examples, or endpoints change. -->
 # mcp-base
 
 A bare-bones [FastMCP](https://github.com/jlowin/fastmcp) server template. Fork this repository to build your own MCP server without starting from scratch.

@@ -13,7 +13,7 @@ from `project.env` and substitutes them in-place into every file that embeds tho
 | `.claude/rules/repository-overview.md` | Docker image name (`sesopenko/mcp-base`) |
 | `.claude/rules/readme-docker-compose.md` | Docker image name (`sesopenko/mcp-base`) |
 | `README.md` | Docker image name and MCP server name |
-| `repository-overview.md` | Docker image name |
+| `dockerhub/repository-overview-copy.md` | Docker image name |
 
 ### Rules
 
