@@ -51,10 +51,21 @@ substitute "sesopenko/mcp-base" "${DOCKER_IMAGE}" "${REPO_ROOT}/.claude/rules/re
 echo ".claude/rules/readme-docker-compose.md"
 substitute "sesopenko/mcp-base" "${DOCKER_IMAGE}" "${REPO_ROOT}/.claude/rules/readme-docker-compose.md"
 
-# README.md — Docker image name, MCP server name
+# README.md — Docker image name, MCP server name, package name
 echo "README.md"
 substitute "sesopenko/mcp-base" "${DOCKER_IMAGE}" "${REPO_ROOT}/README.md"
 substitute "mcp-base" "${MCP_SERVER_NAME}" "${REPO_ROOT}/README.md"
+substitute "mcp_base" "${PACKAGE_NAME}" "${REPO_ROOT}/README.md"
+
+# MAINTAINERS.md — package name
+echo "MAINTAINERS.md"
+substitute "mcp_base" "${PACKAGE_NAME}" "${REPO_ROOT}/MAINTAINERS.md"
+
+# tests/unit/*.py — package name in import statements
+echo "tests/**/*.py"
+for f in "${REPO_ROOT}/tests/unit/"*.py; do
+  substitute "mcp_base" "${PACKAGE_NAME}" "${f}"
+done
 
 # dockerhub/repository-overview-copy.md — Docker image name
 echo "dockerhub/repository-overview-copy.md"

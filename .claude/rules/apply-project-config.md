@@ -12,7 +12,9 @@ from `project.env` and substitutes them in-place into every file that embeds tho
 | `pyproject.toml` | Project `name`, `description`, script entry-point name, and wheel package path |
 | `.claude/rules/repository-overview.md` | Docker image name (`sesopenko/mcp-base`) |
 | `.claude/rules/readme-docker-compose.md` | Docker image name (`sesopenko/mcp-base`) |
-| `README.md` | Docker image name and MCP server name |
+| `README.md` | Docker image name, MCP server name, and package name (`mcp_base`) in code examples and file-path references |
+| `MAINTAINERS.md` | Package name (`mcp_base`) in run commands |
+| `tests/unit/*.py` | Package name in import statements |
 | `dockerhub/repository-overview-copy.md` | Docker image name |
 | `src/mcp_base/*.py` | Package name in module docstrings and imports |
 | `src/mcp_base/` (directory) | Renamed to `src/${PACKAGE_NAME}/` |
