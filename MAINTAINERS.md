@@ -88,6 +88,32 @@ uv run pytest tests/unit/
 
 ---
 
+## Publishing Docker Images
+
+Docker image publishing is disabled by default. The publish workflow checks for a GitHub Actions
+repository variable before attempting to push to Docker Hub. This prevents forks and copies of the
+repository from pushing images unintentionally.
+
+### Enabling Docker publish
+
+1. Go to **Settings → Secrets and variables → Actions → Variables** in your GitHub repository.
+2. Create a repository variable named `ENABLE_DOCKER_PUBLISH` with the value `true`.
+3. Also add the following **secrets** (under the Secrets tab):
+   - `DOCKERHUB_ACCESS_TOKEN` — a Docker Hub access token with write permission
+4. And the following **variable**:
+   - `DOCKERHUB_USERNAME` — your Docker Hub username
+
+Once `ENABLE_DOCKER_PUBLISH` is set to `true`, the workflow will push:
+- `:latest` on every merge to `main`
+- `:<version>`, `:<major>.<minor>`, and `:<major>` tags when a `v*` tag is pushed
+
+### Disabling Docker publish
+
+Delete the `ENABLE_DOCKER_PUBLISH` variable (or set it to any value other than `true`).
+The publish jobs will be skipped on the next CI run.
+
+---
+
 ## Managing Dependencies
 
 ### Add a runtime dependency
