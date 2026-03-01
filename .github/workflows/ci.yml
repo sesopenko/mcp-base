@@ -102,7 +102,7 @@ jobs:
       - name: Smoke-start server and verify it stays up
         working-directory: ${{ runner.temp }}/test-apply
         run: |
-          source project.env
+          PACKAGE_NAME=$(sed -n 's/^PACKAGE_NAME=//p' project.env)
           uv run python -m "$PACKAGE_NAME" &
           SERVER_PID=$!
           sleep 3
