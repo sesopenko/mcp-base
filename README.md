@@ -31,13 +31,13 @@ The template follows a clean three-layer separation:
 
 ## Customising the Template
 
-After forking, run the setup script to substitute the template identity values (image name, package name, project name) throughout the repository:
+After forking, edit `project.env` to set your own values (image name, package name, project name), then run the setup script to substitute them throughout the repository:
 
 ```bash
 bash scripts/apply-project-config.sh
 ```
 
-Edit `project.env` first to set your own values, then run the script. It is idempotent — safe to run multiple times.
+The script is idempotent — safe to run multiple times.
 
 ---
 
