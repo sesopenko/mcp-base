@@ -18,6 +18,38 @@
 
 ---
 
+## Requirements Analysis — FR-12 Expanded to Project Config Pattern
+**Timestamp**: 2026-03-01T00:00:00Z
+**User Input**: "This same pattern of committed configuration should apply for things such as application name, other aspects of the mcp server that the person using this as a base will want to easily change. Basically, facilitate the changing of these details in a file that the person edits when they copy the template."
+**AI Response**: Expanded FR-12 from image-name-only to a full project configuration file pattern. The committed config file now covers DOCKER_IMAGE, PROJECT_NAME, PACKAGE_NAME, MCP_SERVER_NAME, and PROJECT_DESCRIPTION. All project files deriving these values must read from this single file. FR-11 updated to reference "project-identity references" rather than just "image name". GitHub secrets for credentials remain out-of-band.
+**Context**: INCEPTION - Requirements Analysis amendment.
+
+---
+
+## Requirements Analysis — FR-09 and FR-12 Amended
+**Timestamp**: 2026-03-01T00:00:00Z
+**User Input**: "There will be configuration that needs to be checked into version control for people who use this as a base. For example, once they choose an image name they shouldn't have to set it in every environment, that could lead to human error."
+**AI Response**: Amended FR-09 — workflow must read image name from the committed config file, not GitHub repo variables (which would require out-of-band configuration). Amended FR-12 — clarified the committed file is the sole source; CI reads from it at build time; GitHub secrets for credentials are still required but the image name itself must not be a variable or secret.
+**Context**: INCEPTION - Requirements Analysis amendment.
+
+---
+
+## Requirements Analysis — FR-12 Added, FR-11 Amended
+**Timestamp**: 2026-03-01T00:00:00Z
+**User Input**: "Add a requirement that the image name is to be configuration for the project, no hard-coded image names in any steps."
+**AI Response**: Added FR-12 — single source of truth for the Docker Hub image name via a committed configuration file; no other file may hardcode the image name. Amended FR-11 — the two Claude rule files must reference the FR-12 configuration source rather than replacing one hardcoded name with another.
+**Context**: INCEPTION - Requirements Analysis amendment.
+
+---
+
+## Requirements Analysis — FR-11 Added
+**Timestamp**: 2026-03-01T00:00:00Z
+**User Input**: "There are claude rules in .claude/rules that were particular to the project this is forked from. Add requirement/s to strip down the claude rules to that for a base project."
+**AI Response**: Reviewed all 10 rule files. 8 are fully generic (no changes needed). 2 contain the hardcoded image name sesopenko/transmission_client_mcp: repository-overview.md (2 occurrences) and readme-docker-compose.md (1 occurrence). Added FR-11 to replace those with sesopenko/mcp-base.
+**Context**: INCEPTION - Requirements Analysis amendment.
+
+---
+
 ## Requirements Analysis — NFR-01 Amendment
 **Timestamp**: 2026-03-01T00:00:00Z
 **User Input**: "NFR-01: the health check tool mentioned earlier, make sure that's not missed. If it's clear in another requirement then that's fine."

@@ -56,8 +56,8 @@ The `README.md` must be rewritten to serve as a developer guide for the template
 ### FR-08: `repository-overview.md` rewritten for template
 Rewritten for Docker Hub visitors describing the template rather than Transmission-specific tools. The Available Tools table and Example System Prompt are removed (no tools exist). The Acknowledgement section must be preserved.
 
-### FR-09: Publish workflow updated with configurable image name
-`.github/workflows/publish.yml` is kept but the Docker Hub image name is driven by GitHub repository variables (not hardcoded), so users who fork or copy the template can configure their own Docker Hub destination without editing the workflow file.
+### FR-09: Publish workflow reads image name from the committed configuration file
+`.github/workflows/publish.yml` is kept but must read the Docker Hub image name from the committed configuration file established by FR-12 — not from hardcoded values and not from GitHub repository variables. Requiring a separate GitHub variable would create a second place to maintain the image name, introducing human error risk. Changing the Docker Hub destination must be a single committed file edit with no out-of-band configuration required.
 
 ### FR-10: `MAINTAINERS.md` updated
 Remove any commands or references that are no longer valid after stripping (integration test commands, Docker test commands referencing Transmission). Retain all generic commands.
@@ -88,6 +88,35 @@ After stripping, `uv run ruff format .`, `uv run ruff check .`, and `uv run mypy
 | Extension | Enabled | Decided At |
 |---|---|---|
 | security/baseline | No | Requirements Analysis (Q6 — template/scaffold project) |
+
+### FR-11: Remove hardcoded project-identity references from Claude rules
+Two Claude rule files contain the hardcoded image name `sesopenko/transmission_client_mcp` from the source project. These must not simply be replaced with another hardcoded name — they must instead reference the project configuration file established by FR-12:
+
+- `.claude/rules/repository-overview.md` — two occurrences; update to reference the project image name variable
+- `.claude/rules/readme-docker-compose.md` — one occurrence; update to reference the project image name variable
+
+The remaining 8 rule files (`readme-acknowledgement.md`, `llm-ignores.md`, `maintainers.md`, `no-autocommit.md`, `docstrings.md`, `commit-messages.md`, `ai-dlc-workflow-main.md`, `readme-tools.md`) are fully generic and require no changes.
+
+### FR-12: Single committed project configuration file as the template customisation point
+A dedicated project configuration file must be committed to the repository. This is the **only** file a developer needs to edit when using this template as a base for a new MCP server. It defines all project-identity values that would otherwise be scattered across multiple files and require coordinated manual changes.
+
+The file must contain at minimum:
+
+| Key | Purpose | Example |
+|---|---|---|
+| `DOCKER_IMAGE` | Docker Hub image name (org/repo) | `sesopenko/mcp-base` |
+| `PROJECT_NAME` | Python package and pyproject.toml project name | `mcp-base` |
+| `PACKAGE_NAME` | Python package directory name (underscored) | `mcp_base` |
+| `MCP_SERVER_NAME` | Name passed to `FastMCP(...)` — shown to AI clients | `mcp-base` |
+| `PROJECT_DESCRIPTION` | Short description for pyproject.toml and README | `Bare-bones FastMCP server template` |
+
+All project files that reference any of these values must read from this file rather than hardcoding them. This includes:
+- CI/CD workflows (image name, project name)
+- Claude rules (image name)
+- `pyproject.toml` (project name, package name, description)
+- `README.md` and `repository-overview.md` (image name, server name, description)
+
+GitHub repository secrets for Docker Hub credentials (username, token) are still required as they cannot be committed — but no project-identity value belongs in GitHub variables or secrets.
 
 ---
 
