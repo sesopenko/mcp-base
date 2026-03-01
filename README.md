@@ -3,7 +3,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE.txt)
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/downloads/)
 
-A bare-bones [FastMCP](https://github.com/jlowin/fastmcp) server template. Fork this repository to build your own MCP server without starting from scratch.
+A bare-bones [FastMCP](https://github.com/jlowin/fastmcp) server template. Use this as a starting point to build your own MCP server without starting from scratch.
 
 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) is an open standard that lets AI assistants call external tools and services. This template implements MCP over HTTP so any MCP-compatible AI application can reach your server.
 
@@ -19,7 +19,24 @@ A bare-bones [FastMCP](https://github.com/jlowin/fastmcp) server template. Fork 
 
 ## Customising the Template
 
-After forking, edit `project.env` to set your own values (image name, package name, project name), then run the setup script to substitute them throughout the repository:
+### 1. Copy the template
+
+**On GitHub** — click **Use this template → Create a new repository**. This creates a clean copy with no fork relationship and no template history.
+
+**Without GitHub** — clone, strip the history, and reinitialise:
+
+```bash
+git clone https://github.com/sesopenko/mcp-base.git my-project
+cd my-project
+rm -rf .git
+git init
+git add .
+git commit -m "chore: bootstrap from mcp-base template"
+```
+
+### 2. Customise identity values
+
+Edit `project.env` to set your own values (Docker image name, package name, project name, description), then run the setup script to substitute them throughout the repository:
 
 ```bash
 bash scripts/apply-project-config.sh
