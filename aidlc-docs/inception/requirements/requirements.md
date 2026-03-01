@@ -54,10 +54,10 @@ The `README.md` must be rewritten to serve as a developer guide for the template
 - The Acknowledgement section must be preserved (per project rules)
 
 ### FR-08: `repository-overview.md` rewritten for template
-Rewritten for Docker Hub visitors describing the template rather than Transmission-specific tools. The Available Tools table and Example System Prompt are removed (no tools exist). The Acknowledgement section must be preserved.
+Rewritten for Docker Hub visitors describing the template rather than Transmission-specific tools. The Example System Prompt is removed. The Available Tools table is retained but reduced to a single row for `health_check`, with a note in the description that it is a template placeholder — the starting point for adding real tools. The Acknowledgement section must be preserved.
 
 ### FR-09: Publish workflow reads image name from the committed configuration file
-`.github/workflows/publish.yml` is kept but must read the Docker Hub image name from the committed configuration file established by FR-12 — not from hardcoded values and not from GitHub repository variables. Requiring a separate GitHub variable would create a second place to maintain the image name, introducing human error risk. Changing the Docker Hub destination must be a single committed file edit with no out-of-band configuration required.
+`.github/workflows/publish.yml` is kept but must read the Docker Hub image name from `project.env` (established by FR-12) — not from hardcoded values and not from GitHub repository variables. The workflow sources `project.env` to obtain `DOCKER_IMAGE`. Docker Hub credentials (username and token) remain in GitHub repository secrets as they cannot be committed. No project-identity value belongs in GitHub variables or secrets — only credentials do.
 
 ### FR-10: `MAINTAINERS.md` updated
 Remove any commands or references that are no longer valid after stripping (integration test commands, Docker test commands referencing Transmission). Retain all generic commands.
@@ -90,15 +90,16 @@ After stripping, `uv run ruff format .`, `uv run ruff check .`, and `uv run mypy
 | security/baseline | No | Requirements Analysis (Q6 — template/scaffold project) |
 
 ### FR-11: Remove hardcoded project-identity references from Claude rules
-Two Claude rule files contain the hardcoded image name `sesopenko/transmission_client_mcp` from the source project. These must not simply be replaced with another hardcoded name — they must instead reference the project configuration file established by FR-12:
+Two Claude rule files contain the hardcoded image name `sesopenko/transmission_client_mcp` from the source project. These occurrences must be replaced with the `sesopenko/mcp-base` template default value sourced from `project.env`. The setup script established by FR-13 is responsible for rewriting these files when a developer customises the template — the rule files in the committed template will hold the default value, and the script replaces it with whatever `DOCKER_IMAGE` is set to in `project.env`.
 
-- `.claude/rules/repository-overview.md` — two occurrences; update to reference the project image name variable
-- `.claude/rules/readme-docker-compose.md` — one occurrence; update to reference the project image name variable
+Files to update:
+- `.claude/rules/repository-overview.md` — two occurrences
+- `.claude/rules/readme-docker-compose.md` — one occurrence
 
 The remaining 8 rule files (`readme-acknowledgement.md`, `llm-ignores.md`, `maintainers.md`, `no-autocommit.md`, `docstrings.md`, `commit-messages.md`, `ai-dlc-workflow-main.md`, `readme-tools.md`) are fully generic and require no changes.
 
 ### FR-12: Single committed project configuration file as the template customisation point
-A dedicated project configuration file must be committed to the repository. This is the **only** file a developer needs to edit when using this template as a base for a new MCP server. It defines all project-identity values that would otherwise be scattered across multiple files and require coordinated manual changes.
+A shell env file named `project.env` must be committed to the repository. It uses `KEY=value` format (one key per line, no `export` prefix), compatible with both `source` in bash scripts and the GitHub Actions `dotenv` step. This is the **only** file a developer needs to edit when customising the template for a new MCP server; running the setup script (FR-13) propagates those values everywhere else.
 
 The file must contain at minimum:
 
@@ -110,13 +111,28 @@ The file must contain at minimum:
 | `MCP_SERVER_NAME` | Name passed to `FastMCP(...)` — shown to AI clients | `mcp-base` |
 | `PROJECT_DESCRIPTION` | Short description for pyproject.toml and README | `Bare-bones FastMCP server template` |
 
-All project files that reference any of these values must read from this file rather than hardcoding them. This includes:
-- CI/CD workflows (image name, project name)
-- Claude rules (image name)
-- `pyproject.toml` (project name, package name, description)
-- `README.md` and `repository-overview.md` (image name, server name, description)
+**Consumers of `project.env`:**
+- `.github/workflows/publish.yml` — sources `project.env` to read `DOCKER_IMAGE`
+- `scripts/apply-project-config.sh` (FR-13) — sources `project.env` and rewrites all other files that embed identity values
+
+`pyproject.toml`, Claude rule files, `README.md`, and `repository-overview.md` do **not** read `project.env` at runtime. Instead, they hold the current identity values as committed text; the setup script keeps them in sync when `project.env` changes.
 
 GitHub repository secrets for Docker Hub credentials (username, token) are still required as they cannot be committed — but no project-identity value belongs in GitHub variables or secrets.
+
+### FR-13: `scripts/apply-project-config.sh` — template setup script
+A bash script at `scripts/apply-project-config.sh` must be created. It sources `project.env` and performs in-place text substitution to propagate identity values into all files that embed them:
+
+- `pyproject.toml` — `name`, `description`, and the package path under `[tool.hatch.build.targets.wheel]`
+- `.claude/rules/repository-overview.md` — replace the existing Docker image name with `$DOCKER_IMAGE`
+- `.claude/rules/readme-docker-compose.md` — replace the existing Docker image name with `$DOCKER_IMAGE`
+- `README.md` — replace the existing Docker image name with `$DOCKER_IMAGE`; replace the existing server name with `$MCP_SERVER_NAME`
+- `repository-overview.md` — replace the existing Docker image name with `$DOCKER_IMAGE`
+
+The script must be idempotent (safe to run multiple times). It must print a brief summary of each file it modified.
+
+`README.md` must document this script as the **first step** a developer takes after forking or copying the template. `MAINTAINERS.md` must include the command under a "Customising the Template" section.
+
+A Claude rule file must be created at `.claude/rules/apply-project-config.md` after the script is built and tested. Its purpose is to keep the script accurate as the project evolves: it enumerates every file the script touches and what substitution it performs in each, so that an LLM can recognise when a change to one of those files (or the addition of a new file that embeds identity values) requires a corresponding update to `apply-project-config.sh`.
 
 ---
 
@@ -125,4 +141,4 @@ GitHub repository secrets for Docker Hub credentials (username, token) are still
 - Adding any new MCP tools
 - Changing the FastMCP version or transport mechanism
 - Adding authentication to the MCP endpoint
-- Any changes to the AI-DLC workflow tooling (`.aidlc-rule-details/`, `.claude/`)
+- Any changes to the AI-DLC workflow tooling (`.aidlc-rule-details/`) or `.claude/` files other than the two rule files explicitly named in FR-11
