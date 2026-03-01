@@ -19,16 +19,16 @@
 - **Structure patterns**: See code-generation.md Critical Rules
 
 ## Extension Configuration
-| Extension | Status |
-|---|---|
-| security/baseline | TBD (pending requirements analysis question) |
+| Extension | Enabled | Decided At |
+|---|---|---|
+| security/baseline | No | Requirements Analysis |
 
 ## Stage Progress
 | Stage | Status |
 |---|---|
 | Workspace Detection | completed |
 | Reverse Engineering | completed (2026-03-01T00:00:00Z) |
-| Requirements Analysis | pending |
+| Requirements Analysis | completed (2026-03-01T00:00:00Z) |
 | User Stories | pending |
 | Workflow Planning | pending |
 | Application Design | pending |
