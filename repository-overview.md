@@ -1,10 +1,10 @@
-# Transmission Client MCP
+# mcp-base
 
-An MCP server that exposes [Transmission](https://transmissionbt.com/) BitTorrent client controls as tools, allowing AI assistants to manage torrents on your behalf.
+A bare-bones [FastMCP](https://github.com/jlowin/fastmcp) server template. Fork this repository to build your own MCP server without starting from scratch.
 
-[MCP (Model Context Protocol)](https://modelcontextprotocol.io/) is an open standard that lets AI assistants call external tools and services. This server implements MCP over HTTP/SSE so any MCP-compatible AI application can control your Transmission instance.
+[MCP (Model Context Protocol)](https://modelcontextprotocol.io/) is an open standard that lets AI assistants call external tools and services. This template implements MCP over HTTP so any MCP-compatible AI application can reach your server.
 
-GitHub: [sesopenko/transmission_client_mcp](https://github.com/sesopenko/transmission_client_mcp)
+GitHub: [sesopenko/mcp-base](https://github.com/sesopenko/mcp-base)
 
 ---
 
@@ -16,8 +16,8 @@ GitHub: [sesopenko/transmission_client_mcp](https://github.com/sesopenko/transmi
 
    ```yaml
    services:
-     transmission-mcp:
-       image: sesopenko/transmission_client_mcp:latest
+     mcp-base:
+       image: sesopenko/mcp-base:latest
        ports:
          - "8080:8080"
        volumes:
@@ -44,18 +44,12 @@ GitHub: [sesopenko/transmission_client_mcp](https://github.com/sesopenko/transmi
 Create a `config.toml` in the working directory (or pass `--config <path>`):
 
 ```toml
-[transmission]
-host = "localhost"     # hostname or IP of your Transmission instance
-port = 9091            # Transmission RPC port (default: 9091)
-username = "transmission" # RPC username (set in Transmission preferences)
-password = "password"  # RPC password (set in Transmission preferences)
-
 [server]
-host = "0.0.0.0"       # address the MCP server listens on (0.0.0.0 = all interfaces)
-port = 8080            # port the MCP server listens on
+host = "0.0.0.0"  # address the MCP server listens on (0.0.0.0 = all interfaces)
+port = 8080        # port the MCP server listens on
 
 [logging]
-level = "info"         # log verbosity: debug, info, warning, error
+level = "info"     # log verbosity: debug, info, warning, error
 ```
 
 ---
@@ -78,59 +72,11 @@ Consult your AI application's documentation for how to register an MCP server.
 
 ---
 
-## Example System Prompt
-
-Copy and adapt this system prompt to give your AI assistant clear guidance on using the Transmission tools.
-
-```xml
-<system>
-  <role>
-    You are a home network download manager specialising in BitTorrent. Your
-    expertise covers torrent lifecycle management — queuing, monitoring progress,
-    organising downloads, and cleaning up completed or unwanted transfers. You
-    have direct control of a Transmission instance via MCP tools.
-  </role>
-  <tools>
-    <tool name="list_torrents">List all torrents, sorted by date added (oldest first).</tool>
-    <tool name="add_torrent">Add a torrent by magnet link or HTTP/HTTPS URL.</tool>
-    <tool name="get_torrent">Get detailed information about a torrent by name.</tool>
-    <tool name="start_torrent">Start or resume a paused torrent by name.</tool>
-    <tool name="stop_torrent">Stop or pause an active torrent by name.</tool>
-    <tool name="remove_torrent">Remove a torrent by name, keeping data on disk.</tool>
-    <tool name="remove_torrent_and_delete_data">Remove a torrent and permanently delete all downloaded data.</tool>
-  </tools>
-  <guidelines>
-    <item>When the user asks about downloads, call list_torrents first for an overview, then get_torrent for details on a specific item.</item>
-    <item>Before calling remove_torrent or remove_torrent_and_delete_data, confirm the torrent name with the user.</item>
-    <item>Before calling remove_torrent_and_delete_data, explicitly warn the user that all downloaded data will be permanently deleted and require unambiguous confirmation before proceeding.</item>
-    <item>Prefer stop_torrent over removal when the user only wants to pause activity.</item>
-  </guidelines>
-</system>
-```
-
----
-
 ## Available Tools
 
 | Tool | Description |
 |---|---|
-| `list_torrents` | List all torrents managed by Transmission, sorted by date added (oldest first). |
-| `add_torrent` | Add a torrent by magnet link or HTTP/HTTPS URL, with an optional download directory override. |
-| `get_torrent` | Fetch detailed information for a single torrent by name, including file list, save path, ratio, and error state. |
-| `start_torrent` | Start or resume a paused torrent by name. |
-| `stop_torrent` | Stop or pause an active torrent by name. |
-| `remove_torrent` | Remove a torrent by name, keeping all downloaded data on disk. |
-| `remove_torrent_and_delete_data` | Remove a torrent by name and permanently delete all downloaded data. |
-
----
-
-## Security
-
-This server has **no authentication** on its MCP endpoint. It is designed for LAN use only.
-
-**Do not expose this server directly to the internet.**
-
-If you need to access it remotely, place it behind a reverse proxy that handles TLS termination and access control.
+| `health_check` | Returns `{"status": "ok"}` to confirm the server is running. This is a placeholder — replace it with your own tools. |
 
 ---
 
@@ -138,7 +84,7 @@ If you need to access it remotely, place it behind a reverse proxy that handles 
 
 Copyright (c) Sean Esopenko 2026
 
-Licensed under the [GNU General Public License v3.0](https://github.com/sesopenko/transmission_client_mcp/blob/main/LICENSE.txt).
+Licensed under the [GNU General Public License v3.0](https://github.com/sesopenko/mcp-base/blob/main/LICENSE.txt).
 
 ---
 
@@ -148,6 +94,6 @@ This project was built with the assistance of [Claude Code](https://claude.ai/co
 
 AI assistants like Claude are trained on enormous amounts of data — much of it written by the open-source community: the libraries, tools, documentation, and decades of shared knowledge that developers have contributed freely. Without that foundation, tools like this would not be possible.
 
-In recognition of that debt, this project is released under the [GNU General Public License v3.0](https://github.com/sesopenko/transmission_client_mcp/blob/main/LICENSE.txt). The GPL ensures that this code — and any derivative work — remains open source. It is a small act of reciprocity: giving back to the commons that made it possible.
+In recognition of that debt, this project is released under the [GNU General Public License v3.0](https://github.com/sesopenko/mcp-base/blob/main/LICENSE.txt). The GPL ensures that this code — and any derivative work — remains open source. It is a small act of reciprocity: giving back to the commons that made it possible.
 
 To every developer who ever pushed a commit to a public repo, wrote a Stack Overflow answer, or published a package under an open license — thank you.

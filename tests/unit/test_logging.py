@@ -6,7 +6,7 @@ from typing import Any
 
 import pytest
 
-from transmission_mcp.logging import Logger, make_logger
+from mcp_base.logging import Logger, make_logger
 
 # All severity levels in ascending order.
 ALL_LEVELS = ["trace", "debug", "info", "warning", "error", "critical"]

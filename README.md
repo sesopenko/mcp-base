@@ -1,18 +1,48 @@
-# Transmission Client MCP
+# mcp-base
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE.txt)
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/downloads/)
-[![CI](https://github.com/sesopenko/transmission_client_mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/sesopenko/transmission_client_mcp/actions/workflows/ci.yml)
 
-An MCP server that exposes [Transmission](https://transmissionbt.com/) BitTorrent client controls as tools, allowing AI assistants to manage torrents on your behalf.
+A bare-bones [FastMCP](https://github.com/jlowin/fastmcp) server template. Fork this repository to build your own MCP server without starting from scratch.
 
-[MCP (Model Context Protocol)](https://modelcontextprotocol.io/) is an open standard that lets AI assistants call external tools and services. This server implements MCP over HTTP/SSE so any MCP-compatible AI application can control your Transmission instance.
+[MCP (Model Context Protocol)](https://modelcontextprotocol.io/) is an open standard that lets AI assistants call external tools and services. This template implements MCP over HTTP so any MCP-compatible AI application can reach your server.
+
+---
+
+## Architecture
+
+The template follows a clean three-layer separation:
+
+| File | Purpose |
+|---|---|
+| `src/mcp_base/tools.py` | Pure Python functions — one function per tool, no framework coupling |
+| `src/mcp_base/server.py` | FastMCP wiring — registers tool functions with `@mcp.tool()` and runs the server |
+| `src/mcp_base/config.py` | TOML config loading — typed dataclasses for `[server]` and `[logging]` sections |
+| `src/mcp_base/logging.py` | Structured logger factory |
+
+### Adding a tool
+
+1. Add a function to `src/mcp_base/tools.py` with a Google-style docstring and full type annotations.
+2. Import the function in `src/mcp_base/server.py` and register it with `@mcp.tool()`.
+3. Add a unit test in `tests/unit/`.
+4. Add a row to the **Available Tools** table in this README.
+
+---
+
+## Customising the Template
+
+After forking, run the setup script to substitute the template identity values (image name, package name, project name) throughout the repository:
+
+```bash
+bash scripts/apply-project-config.sh
+```
+
+Edit `project.env` first to set your own values, then run the script. It is idempotent — safe to run multiple times.
 
 ---
 
 ## Prerequisites
 
-- **Transmission** — running and accessible on your network
 - **Docker** — for the Docker Compose deployment path
 - **uv** — for the source deployment path (see [Installing uv](https://docs.astral.sh/uv/getting-started/installation/))
 
@@ -26,8 +56,8 @@ An MCP server that exposes [Transmission](https://transmissionbt.com/) BitTorren
 
    ```yaml
    services:
-     transmission-mcp:
-       image: sesopenko/transmission_client_mcp:latest
+     mcp-base:
+       image: sesopenko/mcp-base:latest
        ports:
          - "8080:8080"
        volumes:
@@ -66,7 +96,7 @@ An MCP server that exposes [Transmission](https://transmissionbt.com/) BitTorren
 4. Start the server:
 
    ```bash
-   uv run python -m transmission_mcp
+   uv run python -m mcp_base
    ```
 
 ---
@@ -76,18 +106,33 @@ An MCP server that exposes [Transmission](https://transmissionbt.com/) BitTorren
 Create a `config.toml` in the working directory (or pass `--config <path>`):
 
 ```toml
-[transmission]
-host = "localhost"
-port = 9091
-username = "transmission"
-password = "password"
-
 [server]
 host = "0.0.0.0"
 port = 8080
 
 [logging]
 level = "info"
+```
+
+### [server]
+
+| Key | Default | Description |
+|---|---|---|
+| `host` | `"0.0.0.0"` | Address the MCP server listens on. `0.0.0.0` binds all interfaces. |
+| `port` | `8080` | Port the MCP server listens on. |
+
+### [logging]
+
+| Key | Default | Description |
+|---|---|---|
+| `level` | `"info"` | Log verbosity. One of: `debug`, `info`, `warning`, `error`. |
+
+---
+
+## Running Tests
+
+```bash
+uv run pytest tests/unit/
 ```
 
 ---
@@ -112,30 +157,21 @@ Consult your AI application's documentation for how to register an MCP server.
 
 ## Example System Prompt
 
-Copy and adapt this system prompt to give your AI assistant clear guidance on using the Transmission tools.
+XML is preferred over markdown for system prompts because explicit named tags give unambiguous semantic meaning — the AI always knows exactly what each block contains. Markdown headings require inference and are more likely to be misinterpreted.
+
+Copy and adapt this prompt to give your AI assistant clear guidance on using the tools.
 
 ```xml
 <system>
   <role>
-    You are a home network download manager specialising in BitTorrent. Your
-    expertise covers torrent lifecycle management — queuing, monitoring progress,
-    organising downloads, and cleaning up completed or unwanted transfers. You
-    have direct control of a Transmission instance via MCP tools.
+    You are a helpful assistant with access to an MCP server. Use the available
+    tools to fulfil user requests accurately and efficiently.
   </role>
   <tools>
-    <tool name="list_torrents">List all torrents, sorted by date added (oldest first).</tool>
-    <tool name="add_torrent">Add a torrent by magnet link or HTTP/HTTPS URL.</tool>
-    <tool name="get_torrent">Get detailed information about a torrent by name.</tool>
-    <tool name="start_torrent">Start or resume a paused torrent by name.</tool>
-    <tool name="stop_torrent">Stop or pause an active torrent by name.</tool>
-    <tool name="remove_torrent">Remove a torrent by name, keeping data on disk.</tool>
-    <tool name="remove_torrent_and_delete_data">Remove a torrent and permanently delete all downloaded data.</tool>
+    <tool name="health_check">Check that the MCP server is running and reachable.</tool>
   </tools>
   <guidelines>
-    <item>When the user asks about downloads, call list_torrents first for an overview, then get_torrent for details on a specific item.</item>
-    <item>Before calling remove_torrent or remove_torrent_and_delete_data, confirm the torrent name with the user.</item>
-    <item>Before calling remove_torrent_and_delete_data, explicitly warn the user that all downloaded data will be permanently deleted and require unambiguous confirmation before proceeding.</item>
-    <item>Prefer stop_torrent over removal when the user only wants to pause activity.</item>
+    <item>Call health_check if the user asks whether the server is available.</item>
   </guidelines>
 </system>
 ```
@@ -146,13 +182,7 @@ Copy and adapt this system prompt to give your AI assistant clear guidance on us
 
 | Tool | Description |
 |---|---|
-| `list_torrents` | List all torrents managed by Transmission, sorted by date added (oldest first). |
-| `add_torrent` | Add a torrent by magnet link or HTTP/HTTPS URL, with an optional download directory override. |
-| `get_torrent` | Fetch detailed information for a single torrent by name, including file list, save path, ratio, and error state. |
-| `start_torrent` | Start or resume a paused torrent by name. |
-| `stop_torrent` | Stop or pause an active torrent by name. |
-| `remove_torrent` | Remove a torrent by name, keeping all downloaded data on disk. |
-| `remove_torrent_and_delete_data` | Remove a torrent by name and permanently delete all downloaded data. |
+| `health_check` | Returns `{"status": "ok"}` to confirm the server is running. |
 
 > Tools are documented here as they are implemented.
 

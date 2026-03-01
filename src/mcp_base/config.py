@@ -1,4 +1,4 @@
-"""Configuration loading for the Transmission MCP server.
+"""Configuration loading for the mcp-base server.
 
 Reads a TOML config file and returns typed dataclass instances for each
 section. The default config path is ``config.toml`` in the working directory;
@@ -8,16 +8,6 @@ pass ``--config <path>`` at the CLI to override.
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path
-
-
-@dataclass
-class TransmissionConfig:
-    """Connection settings for the Transmission RPC endpoint."""
-
-    host: str
-    port: int
-    username: str
-    password: str
 
 
 @dataclass
@@ -39,7 +29,6 @@ class LoggingConfig:
 class AppConfig:
     """Top-level application configuration, parsed from a TOML file."""
 
-    transmission: TransmissionConfig
     server: ServerConfig
     logging: LoggingConfig
 
@@ -62,12 +51,6 @@ def load_config(path: Path = Path("config.toml")) -> AppConfig:
     with open(path, "rb") as f:
         raw = tomllib.load(f)
 
-    transmission = TransmissionConfig(
-        host=raw["transmission"]["host"],
-        port=int(raw["transmission"]["port"]),
-        username=raw["transmission"]["username"],
-        password=raw["transmission"]["password"],
-    )
     server = ServerConfig(
         host=raw["server"]["host"],
         port=int(raw["server"]["port"]),
@@ -75,4 +58,4 @@ def load_config(path: Path = Path("config.toml")) -> AppConfig:
     logging = LoggingConfig(
         level=raw["logging"]["level"],
     )
-    return AppConfig(transmission=transmission, server=server, logging=logging)
+    return AppConfig(server=server, logging=logging)

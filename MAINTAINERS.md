@@ -26,6 +26,18 @@ uv run pre-commit install
 
 ---
 
+## Customising the Template
+
+After forking, edit `project.env` with your own project identity values, then run:
+
+```bash
+bash scripts/apply-project-config.sh
+```
+
+This substitutes the template name, package name, Docker image name, and description throughout the repository. The script is idempotent — safe to run multiple times.
+
+---
+
 ## Code Quality
 
 Run all quality checks manually:
@@ -45,7 +57,7 @@ These checks also run automatically on every commit via pre-commit hooks.
 ### Locally
 
 ```bash
-uv run python -m transmission_mcp
+uv run python -m mcp_base
 ```
 
 Pass `--config <path>` to use a non-default config file location.
@@ -55,7 +67,7 @@ Pass `--config <path>` to use a non-default config file location.
 Build the image:
 
 ```bash
-docker build -t transmission-mcp .
+docker build -t mcp-base .
 ```
 
 Start the server (requires `config.toml` in the current directory):
@@ -72,43 +84,6 @@ docker compose up
 
 ```bash
 uv run pytest tests/unit/
-```
-
-### Integration tests
-
-Requires Docker with either the modern Compose plugin (`docker compose`) or the
-legacy standalone binary (`docker-compose`). The harness auto-detects which is
-available at startup and fails fast with a clear message if neither is found.
-
-The harness automatically starts and stops a Transmission container
-(`docker-compose.test.yml`) for the duration of the test session.
-
-```bash
-uv run pytest tests/integration/
-```
-
-#### Optional environment variables
-
-| Variable | Default | Purpose |
-|---|---|---|
-| `TRANSMISSION_TEST_HOST` | `localhost` | Transmission RPC host |
-| `TRANSMISSION_TEST_PORT` | `19091` | Transmission RPC port |
-| `TRANSMISSION_TEST_USERNAME` | _(none)_ | RPC username, if auth is enabled |
-| `TRANSMISSION_TEST_PASSWORD` | _(none)_ | RPC password, if auth is enabled |
-| `TRANSMISSION_TEST_TIMEOUT_SECONDS` | `120` | Seconds to wait for container readiness |
-
-### All tests
-
-```bash
-uv run pytest
-```
-
-### Docker build and compose
-
-Verifies that the `Dockerfile` builds successfully and that `docker compose up` starts the server. Cleans up after itself.
-
-```bash
-bash scripts/test-docker.sh
 ```
 
 ---

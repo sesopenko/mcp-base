@@ -16,9 +16,6 @@ on:
     workflows: [CI]
     types: [completed]
 
-env:
-  IMAGE: sesopenko/transmission_client_mcp
-
 jobs:
   publish-latest:
     name: Publish latest
@@ -30,6 +27,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Load project.env
+        run: |
+          while IFS='=' read -r key value; do
+            [[ -z "$key" || "$key" == \#* ]] && continue
+            echo "${key}=${value}" >> "$GITHUB_ENV"
+          done < project.env
 
       - uses: docker/setup-buildx-action@v3
 
@@ -43,7 +47,7 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: ${{ env.IMAGE }}:latest
+          tags: ${{ env.DOCKER_IMAGE }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -59,6 +63,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Load project.env
+        run: |
+          while IFS='=' read -r key value; do
+            [[ -z "$key" || "$key" == \#* ]] && continue
+            echo "${key}=${value}" >> "$GITHUB_ENV"
+          done < project.env
 
       # Fetch all tags and check whether a v* tag points at the triggering commit.
       # head_branch is not used because it reflects the source branch, not the tag,
@@ -98,8 +109,8 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ${{ env.IMAGE }}:${{ steps.version.outputs.version }}
-            ${{ env.IMAGE }}:${{ steps.version.outputs.minor }}
-            ${{ env.IMAGE }}:${{ steps.version.outputs.major }}
+            ${{ env.DOCKER_IMAGE }}:${{ steps.version.outputs.version }}
+            ${{ env.DOCKER_IMAGE }}:${{ steps.version.outputs.minor }}
+            ${{ env.DOCKER_IMAGE }}:${{ steps.version.outputs.major }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

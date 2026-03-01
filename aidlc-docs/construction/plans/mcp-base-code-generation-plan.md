@@ -21,16 +21,16 @@ All 8 change groups are executed in dependency order:
 
 ## Group 1: Deletions
 
-- [ ] Step 1.1 — Delete `docs/` directory (FR-06)
+- [x] Step 1.1 — Delete `docs/` directory (FR-06)
   - Target: `docs/` (contains `ratios-explained.md`, `review-phase-9.xml`)
   - Action: Remove entire directory
-- [ ] Step 1.2 — Delete `tests/integration/` directory (FR-05)
+- [x] Step 1.2 — Delete `tests/integration/` directory (FR-05)
   - Target: `tests/integration/` (conftest.py + 6 test files)
   - Action: Remove entire directory
-- [ ] Step 1.3 — Delete `docker-compose.test.yml` (FR-05)
+- [x] Step 1.3 — Delete `docker-compose.test.yml` (FR-05)
   - Target: `docker-compose.test.yml`
   - Action: Delete file
-- [ ] Step 1.4 — Delete Transmission unit test files (FR-05)
+- [x] Step 1.4 — Delete Transmission unit test files (FR-05)
   - Targets:
     - `tests/unit/test_add_torrent.py`
     - `tests/unit/test_management_tools.py`
@@ -42,24 +42,24 @@ All 8 change groups are executed in dependency order:
 
 ## Group 2: Package Rename
 
-- [ ] Step 2.1 — Rename package directory (FR-01)
+- [x] Step 2.1 — Rename package directory (FR-01)
   - Action: Rename `src/transmission_mcp/` → `src/mcp_base/`
   - All files inside move with the directory: `__init__.py`, `__main__.py`, `server.py`, `tools.py`, `config.py`, `logging.py`
-- [ ] Step 2.2 — Update `src/mcp_base/__main__.py` imports (FR-01)
+- [x] Step 2.2 — Update `src/mcp_base/__main__.py` imports (FR-01)
   - Replace any `transmission_mcp` import references with `mcp_base`
 
 ---
 
 ## Group 3: Python Source
 
-- [ ] Step 3.1 — Rewrite `src/mcp_base/tools.py` (FR-02, FR-03, NFR-01)
+- [x] Step 3.1 — Rewrite `src/mcp_base/tools.py` (FR-02, FR-03, NFR-01)
   - Remove all Transmission tool implementations (`list_torrents`, `add_torrent`, `get_torrent`, `start_torrent`, `stop_torrent`, `remove_torrent`, `remove_torrent_and_delete_data`) and all private helpers
   - Remove all `transmission_rpc` imports
   - Add single `health_check()` function returning `{"status": "ok"}`
   - Apply Google-style docstring on `health_check`
   - Apply type annotation: `def health_check() -> dict[str, str]:`
 
-- [ ] Step 3.2 — Rewrite `src/mcp_base/server.py` (FR-02, FR-03, NFR-01)
+- [x] Step 3.2 — Rewrite `src/mcp_base/server.py` (FR-02, FR-03, NFR-01)
   - Remove all `@mcp.tool()` registrations for the 7 Transmission tools
   - Remove `transmission_rpc` imports
   - Remove `_client` global variable
@@ -68,7 +68,7 @@ All 8 change groups are executed in dependency order:
   - Update `FastMCP(...)` name argument to use `mcp-base` (from project.env default; hardcode the default for now — the setup script will substitute it)
   - Remove the `AppConfig.transmission` usage from `main()`
 
-- [ ] Step 3.3 — Rewrite `src/mcp_base/config.py` (FR-03, FR-04)
+- [x] Step 3.3 — Rewrite `src/mcp_base/config.py` (FR-03, FR-04)
   - Remove `TransmissionConfig` dataclass
   - Remove `[transmission]` section parsing from `load_config()`
   - Remove any imports only used by `TransmissionConfig`
@@ -79,7 +79,7 @@ All 8 change groups are executed in dependency order:
 
 ## Group 4: Tests
 
-- [ ] Step 4.1 — Strip `tests/unit/test_config.py` (FR-05)
+- [x] Step 4.1 — Strip `tests/unit/test_config.py` (FR-05)
   - Remove all test functions that reference `TransmissionConfig`
   - Remove any `TransmissionConfig` imports
   - Retain `ServerConfig` and `LoggingConfig` test coverage
@@ -90,7 +90,7 @@ All 8 change groups are executed in dependency order:
 
 ## Group 5: Config & CI
 
-- [ ] Step 5.1 — Create `project.env` (FR-12)
+- [x] Step 5.1 — Create `project.env` (FR-12)
   - New file at repo root
   - Contents (KEY=value, no `export`, no quotes):
     ```
@@ -101,18 +101,18 @@ All 8 change groups are executed in dependency order:
     PROJECT_DESCRIPTION=Bare-bones FastMCP server template
     ```
 
-- [ ] Step 5.2 — Update `pyproject.toml` (FR-01, FR-03, FR-12)
+- [x] Step 5.2 — Update `pyproject.toml` (FR-01, FR-03, FR-12)
   - Change `name` from `transmission-mcp` to `mcp-base`
   - Change `description` to `Bare-bones FastMCP server template`
   - Remove `transmission-rpc==7.0.11` from dependencies
   - Update script entry point from `transmission-mcp` to `mcp-base` and from `transmission_mcp.server:main` to `mcp_base.server:main`
   - Update `[tool.hatch.build.targets.wheel]` package path from `src/transmission_mcp` to `src/mcp_base`
 
-- [ ] Step 5.3 — Update `config.toml.example` (FR-04)
+- [x] Step 5.3 — Update `config.toml.example` (FR-04)
   - Remove the `[transmission]` section entirely
   - Retain `[server]` and `[logging]` sections with existing example values
 
-- [ ] Step 5.4 — Update `.github/workflows/publish.yml` (FR-09)
+- [x] Step 5.4 — Update `.github/workflows/publish.yml` (FR-09)
   - Add a step before the Docker build steps in both `publish-latest` and `publish-release` jobs to source `project.env`
   - Use GitHub Actions dotenv syntax: add a step that reads `project.env` into `$GITHUB_ENV`
   - Replace hardcoded image name `sesopenko/transmission_client_mcp` with `${{ env.DOCKER_IMAGE }}`
@@ -121,7 +121,7 @@ All 8 change groups are executed in dependency order:
 
 ## Group 6: Setup Script
 
-- [ ] Step 6.1 — Create `scripts/apply-project-config.sh` (FR-13)
+- [x] Step 6.1 — Create `scripts/apply-project-config.sh` (FR-13)
   - Bash script sourcing `project.env` from repo root
   - Performs in-place `sed` substitutions for each identity value in:
     - `pyproject.toml` — `name`, `description`, package path
@@ -137,7 +137,7 @@ All 8 change groups are executed in dependency order:
 
 ## Group 7: Documentation
 
-- [ ] Step 7.1 — Rewrite `README.md` (FR-07)
+- [x] Step 7.1 — Rewrite `README.md` (FR-07)
   - Content must cover:
     - What the template is and what it provides
     - Architecture: server/config/logging separation pattern
@@ -153,7 +153,7 @@ All 8 change groups are executed in dependency order:
     - Docker Compose example using `sesopenko/mcp-base:latest`
     - Acknowledgement section (MUST be preserved per project rules)
 
-- [ ] Step 7.2 — Rewrite `repository-overview.md` (FR-08)
+- [x] Step 7.2 — Rewrite `repository-overview.md` (FR-08)
   - Docker Hub visitor-facing overview of the template
   - Available Tools table: single row for `health_check` with note that it is a placeholder
   - Docker Compose example using `sesopenko/mcp-base:latest`
@@ -163,7 +163,7 @@ All 8 change groups are executed in dependency order:
   - No Example System Prompt (per FR-08)
   - No developer workflow steps
 
-- [ ] Step 7.3 — Update `MAINTAINERS.md` (FR-10, FR-13)
+- [x] Step 7.3 — Update `MAINTAINERS.md` (FR-10, FR-13)
   - Remove any commands referencing integration tests, docker-compose.test.yml, or Transmission
   - Add **Customising the Template** section with:
     ```bash
@@ -174,13 +174,13 @@ All 8 change groups are executed in dependency order:
 
 ## Group 8: Claude Rules
 
-- [ ] Step 8.1 — Update `.claude/rules/repository-overview.md` (FR-11)
+- [x] Step 8.1 — Update `.claude/rules/repository-overview.md` (FR-11)
   - Replace two occurrences of `sesopenko/transmission_client_mcp` with `sesopenko/mcp-base`
 
-- [ ] Step 8.2 — Update `.claude/rules/readme-docker-compose.md` (FR-11)
+- [x] Step 8.2 — Update `.claude/rules/readme-docker-compose.md` (FR-11)
   - Replace one occurrence of `sesopenko/transmission_client_mcp` with `sesopenko/mcp-base`
 
-- [ ] Step 8.3 — Create `.claude/rules/apply-project-config.md` (FR-13)
+- [x] Step 8.3 — Create `.claude/rules/apply-project-config.md` (FR-13)
   - Documents every file that `scripts/apply-project-config.sh` touches
   - For each file: what substitution is performed
   - Instructs the LLM to update the script when a new file embedding identity values is added
