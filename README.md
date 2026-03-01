@@ -9,23 +9,11 @@ A bare-bones [FastMCP](https://github.com/jlowin/fastmcp) server template. Fork 
 
 ---
 
-## Architecture
+## Prerequisites
 
-The template follows a clean three-layer separation:
-
-| File | Purpose |
-|---|---|
-| `src/mcp_base/tools.py` | Pure Python functions — one function per tool, no framework coupling |
-| `src/mcp_base/server.py` | FastMCP wiring — registers tool functions with `@mcp.tool()` and runs the server |
-| `src/mcp_base/config.py` | TOML config loading — typed dataclasses for `[server]` and `[logging]` sections |
-| `src/mcp_base/logging.py` | Structured logger factory |
-
-### Adding a tool
-
-1. Add a function to `src/mcp_base/tools.py` with a Google-style docstring and full type annotations.
-2. Import the function in `src/mcp_base/server.py` and register it with `@mcp.tool()`.
-3. Add a unit test in `tests/unit/`.
-4. Add a row to the **Available Tools** table in this README.
+- **Docker** — for the Docker Compose deployment path
+- **uv** — for the source deployment path (see [Installing uv](https://docs.astral.sh/uv/getting-started/installation/))
+- **Node.js** — required for the git commit hooks; the hooks use [commitlint](https://commitlint.js.org/) to enforce Conventional Commits, which is the best-in-class Node.js tool for commit message validation
 
 ---
 
@@ -38,13 +26,6 @@ bash scripts/apply-project-config.sh
 ```
 
 The script is idempotent — safe to run multiple times.
-
----
-
-## Prerequisites
-
-- **Docker** — for the Docker Compose deployment path
-- **uv** — for the source deployment path (see [Installing uv](https://docs.astral.sh/uv/getting-started/installation/))
 
 ---
 
@@ -101,6 +82,16 @@ The script is idempotent — safe to run multiple times.
 
 ---
 
+## Security
+
+This server has **no authentication** on its MCP endpoint. It is designed for LAN use only.
+
+**Do not expose this server directly to the internet.**
+
+If you need to access it remotely, place it behind a reverse proxy that handles TLS termination and access control. Configuring a reverse proxy is outside the scope of this project.
+
+---
+
 ## Configuration
 
 Create a `config.toml` in the working directory (or pass `--config <path>`):
@@ -129,15 +120,9 @@ level = "info"
 
 ---
 
-## Running Tests
-
-```bash
-uv run pytest tests/unit/
-```
-
----
-
 ## Connecting an AI Application
+
+This server uses the **Streamable HTTP** MCP transport. Clients communicate via HTTP POST with streaming responses — opening the endpoint in a browser will return a `Not Acceptable` error, which is expected.
 
 Point your MCP-compatible AI application at the server's MCP endpoint:
 
@@ -151,7 +136,7 @@ For example, if the server is running on `192.168.1.10` with the default port:
 http://192.168.1.10:8080/mcp
 ```
 
-Consult your AI application's documentation for how to register an MCP server.
+Consult your AI application's documentation for how to register an MCP server. Ensure it supports the Streamable HTTP transport (most modern MCP clients do).
 
 ---
 
@@ -161,6 +146,11 @@ XML is preferred over markdown for system prompts because explicit named tags gi
 
 Copy and adapt this prompt to give your AI assistant clear guidance on using the tools.
 
+> **Tip — let an LLM write this for you.** XML-structured system prompts are effective but unfamiliar to most developers and tedious to write by hand. A quick conversation with any capable LLM (describe your tools, what they do, and how you want the assistant to behave) will produce a well-structured prompt you can drop straight in. The results are often better than anything written manually as plain text or markdown.
+>
+> * XML tags act like labeled folders — the model knows exactly where each piece of information starts and stops
+> * Training data is full of structured markup, so models already "think" in tags naturally
+> * Tags prevent the model from confusing your instructions with the content it's working on
 ```xml
 <system>
   <role>
@@ -188,13 +178,31 @@ Copy and adapt this prompt to give your AI assistant clear guidance on using the
 
 ---
 
-## Security
+## Architecture
 
-This server has **no authentication** on its MCP endpoint. It is designed for LAN use only.
+The template follows a clean three-layer separation:
 
-**Do not expose this server directly to the internet.**
+| File | Purpose |
+|---|---|
+| `src/mcp_base/tools.py` | Pure Python functions — one function per tool, no framework coupling |
+| `src/mcp_base/server.py` | FastMCP wiring — registers tool functions with `@mcp.tool()` and runs the server |
+| `src/mcp_base/config.py` | TOML config loading — typed dataclasses for `[server]` and `[logging]` sections |
+| `src/mcp_base/logging.py` | Structured logger factory |
 
-If you need to access it remotely, place it behind a reverse proxy that handles TLS termination and access control. Configuring a reverse proxy is outside the scope of this project.
+### Adding a tool
+
+1. Add a function to `src/mcp_base/tools.py` with a Google-style docstring and full type annotations.
+2. Import the function in `src/mcp_base/server.py` and register it with `@mcp.tool()`.
+3. Add a unit test in `tests/unit/`.
+4. Add a row to the **Available Tools** table in this README.
+
+---
+
+## Running Tests
+
+```bash
+uv run pytest tests/unit/
+```
 
 ---
 
