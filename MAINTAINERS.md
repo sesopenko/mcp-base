@@ -114,6 +114,45 @@ The publish jobs will be skipped on the next CI run.
 
 ---
 
+## AI Agent Rails
+
+The `.claude/rules/` directory contains a set of standing instructions that are automatically loaded whenever Claude Code is used in this repository. They act as guardrails — keeping the agent's behaviour consistent and predictable as you extend the project.
+
+**Commit discipline**
+- The agent never creates a commit unless you explicitly ask it to
+- Commit messages are enforced to follow Conventional Commits (`type(scope): subject`, 50-character limit, body required, no WIP commits on main)
+
+**Code quality**
+- All public functions and methods must have Google-style docstrings describing behaviour, not implementation
+- Full type annotations are required on all public interfaces
+- Code must pass `ruff format`, `ruff check`, and `mypy` before committing
+
+**Documentation accuracy**
+- The Available Tools table in `README.md` must be updated whenever a new tool is implemented
+- The Docker Compose example in `README.md` must stay accurate if the image name, port, or config path changes
+- `repository-overview.md` (the Docker Hub overview) must be updated to match any changes to tools, configuration, or endpoints
+- `MAINTAINERS.md` must be updated with any new developer commands introduced during development
+
+**Template integrity**
+- Any new file that embeds a value from `project.env` (image name, package name, etc.) must have a corresponding substitution wired up in `scripts/apply-project-config.sh`
+- The Acknowledgement section at the bottom of `README.md` is permanent and must never be removed
+
+**Structured development workflow**
+- The agent follows the AIDLC (AI-Driven Development Lifecycle) workflow for non-trivial changes: inception (requirements and design), construction (code generation), and operations (placeholder)
+- Each phase requires explicit user approval before proceeding
+
+### Using these rules in Cursor
+
+The rules are written for Claude Code but the same constraints apply in Cursor. Run the following script to copy them into `.cursor/rules/` with the `.mdc` extension and the frontmatter Cursor requires for always-on rules:
+
+```bash
+bash scripts/copy-rules-to-cursor.sh
+```
+
+Re-run it any time the rules change to keep the two sets in sync.
+
+---
+
 ## Managing Dependencies
 
 ### Add a runtime dependency

@@ -208,7 +208,7 @@ uv run pytest tests/unit/
 
 ## Contributing / Maintaining
 
-See [MAINTAINERS.md](MAINTAINERS.md) for setup, development commands, and how to run tests.
+See [MAINTAINERS.md](MAINTAINERS.md) for setup, development commands, AI agent rails, and how to run tests.
 
 ---
 
