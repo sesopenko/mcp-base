@@ -51,6 +51,10 @@ substitute "sesopenko/mcp-base" "${DOCKER_IMAGE}" "${REPO_ROOT}/.claude/rules/re
 echo ".claude/rules/readme-docker-compose.md"
 substitute "sesopenko/mcp-base" "${DOCKER_IMAGE}" "${REPO_ROOT}/.claude/rules/readme-docker-compose.md"
 
+# Dockerfile — MCP server name in CMD directive
+echo "Dockerfile"
+substitute "mcp-base" "${MCP_SERVER_NAME}" "${REPO_ROOT}/Dockerfile"
+
 # README.md — Docker image name, MCP server name, package name
 echo "README.md"
 substitute "sesopenko/mcp-base" "${DOCKER_IMAGE}" "${REPO_ROOT}/README.md"
