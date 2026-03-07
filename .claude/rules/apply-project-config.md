@@ -18,6 +18,7 @@ from `project.env` and substitutes them in-place into every file that embeds tho
 | `dockerhub/repository-overview-copy.md` | Docker image name |
 | `src/mcp_base/*.py` | Package name in module docstrings and imports |
 | `src/mcp_base/` (directory) | Renamed to `src/${PACKAGE_NAME}/` |
+| `.github/workflows/ci.yml` | `test-template-apply` job block removed (not needed in derived projects) |
 
 ### Rules
 

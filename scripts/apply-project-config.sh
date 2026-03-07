@@ -87,4 +87,12 @@ if [[ "${PACKAGE_NAME}" != "mcp_base" && -d "${REPO_ROOT}/src/mcp_base" ]]; then
   mv "${REPO_ROOT}/src/mcp_base" "${REPO_ROOT}/src/${PACKAGE_NAME}"
 fi
 
+# .github/workflows/ci.yml — remove the template-apply test job (not needed in derived projects)
+echo ".github/workflows/ci.yml"
+CI_FILE="${REPO_ROOT}/.github/workflows/ci.yml"
+if grep -q "^  test-template-apply:" "${CI_FILE}" 2>/dev/null; then
+  sed -i '/^  test-template-apply:/,$ d' "${CI_FILE}"
+  echo "  updated: ${CI_FILE}"
+fi
+
 echo "Done."
